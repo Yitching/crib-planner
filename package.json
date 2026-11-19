@@ -1,0 +1,11 @@
+{
+  "name": "crib-planner",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Our Home: a BTO flat payment planner",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "node --test"
+  }
+}
