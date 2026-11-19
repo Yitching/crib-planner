@@ -230,3 +230,8 @@ button { cursor: pointer; }
 .empty { padding: 20px; text-align: center; }
 .empty .art-sun { width: 150px; margin-top: 0; }
 .empty__title { margin: 8px 0 0; font-size: 20px; font-weight: 800; }
+
+/* ---------- Loading & errors ---------- */
+.pill--loading { background: #fff; padding-left: 14px; color: var(--muted); }
+.error { margin: 14px 0 0; padding: 12px 14px; border: 2px solid var(--ink); border-radius: 14px; background: var(--peach); font-weight: 700; font-size: 14px; }
+.link { border: 0; background: none; padding: 0; font-weight: 800; text-decoration: underline; min-height: 0; }

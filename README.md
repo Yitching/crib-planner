@@ -5,32 +5,76 @@ a winding **road to your keys** with a stop for each payment.
 
 Design: [`docs/design-summary.md`](docs/design-summary.md) (concept C, "Road to your keys").
 
+## Stack
+
+| Part | Tech | Folder |
+| --- | --- | --- |
+| Frontend | React 19 + TypeScript, built with Vite | [`frontend/`](frontend) |
+| Backend | Go (standard library only) | [`backend/`](backend) |
+
+The Go backend owns all the payment maths (`backend/internal/calc`) and exposes it as a JSON API.
+The React app calls it as you type. In production, the Go server also serves the built React app,
+so there is a single server to deploy. Answers are saved in the browser (`localStorage`); there are no accounts yet.
+
+## Run it
+
+You need Go 1.22+ and Node 20+.
+
+```bash
+make install    # install frontend packages
+```
+
+For development, run these in two terminals, then open http://localhost:5173:
+
+```bash
+make dev-backend    # Go API on :8081
+```
+
+```bash
+make dev-frontend   # Vite dev server on :5173, forwards /api to :8081
+```
+
+For production, build the frontend and serve everything from Go on http://localhost:8081:
+
+```bash
+make build && make serve
+```
+
+Tests (Go unit and API tests, plus a TypeScript type check):
+
+```bash
+make test
+```
+
+## API
+
+| Method | Path | What it does |
+| --- | --- | --- |
+| `GET` | `/api/health` | `{"status":"ok"}` |
+| `GET` | `/api/defaults` | The design's example inputs |
+| `POST` | `/api/calculate` | Inputs in, payment stops and verdict out |
+
+Example:
+
+```bash
+curl -X POST localhost:8081/api/calculate -d '{"flatType":"4-room","price":400000,"income":7000,"cpfA":25000,"cpfB":20000,"cash":93000,"loanType":"hdb"}'
+```
+
+Missing fields fall back to the example values. Unknown fields, unknown flat or loan types,
+and negative amounts get a `400` with an `error` message.
+
 ## Screens
 
-- **First-time setup (C2):** six questions, one per screen: flat, combined income, your CPF OA,
+- **First-time setup:** six questions, one per screen: flat, combined income, your CPF OA,
   your partner's CPF OA, cash saved, and HDB or bank loan. Each one gives instant feedback, such as the grant estimate.
-- **Road to your keys (C):** the verdict ("You can afford it"), cash left for renovation, and four
+- **Road to your keys:** the verdict ("You can afford it"), cash left for renovation, and four
   stops: book, sign the lease, get your keys, and the monthly loan.
-- **Edit my numbers (C3):** a sheet that slides up to change any input, then "Show my road".
+- **Edit my numbers:** a sheet that slides up to change any input, then "Show my road".
 - **Budget:** what's left at key collection. **Vendors:** placeholder for now.
-
-Inputs are saved in the browser (`localStorage`).
-
-## Run
-
-No build step and no dependencies.
-
-```bash
-npm start      # serves on http://localhost:8080
-```
-
-```bash
-npm test       # calculator tests (Node 20+)
-```
 
 ## How the numbers work
 
-All logic is in [`src/calc.js`](src/calc.js); every assumption is a named constant at the top.
+Every assumption is a named constant at the top of [`backend/internal/calc/calc.go`](backend/internal/calc/calc.go).
 
 | Assumption | Value |
 | --- | --- |
