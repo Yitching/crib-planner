@@ -7,13 +7,14 @@ interface MoneyInputProps {
   onChange: (value: number) => void;
   large?: boolean;
   label?: string;
+  suffix?: string;
 }
 
 /** A dollar input that shows 400,000 while idle and lets people type freely while focused. */
-export function MoneyInput({ id, value, onChange, large = false, label }: MoneyInputProps) {
+export function MoneyInput({ id, value, onChange, large = false, label, suffix }: MoneyInputProps) {
   const [draft, setDraft] = useState<string | null>(null);
   return (
-    <div className={`money ${large ? 'money--large' : ''}`}>
+    <div className={`money ${large ? 'money--large' : ''} ${suffix ? 'money--suffix' : ''}`}>
       <span className="money__prefix" aria-hidden="true">$</span>
       <input
         id={id}
@@ -29,7 +30,40 @@ export function MoneyInput({ id, value, onChange, large = false, label }: MoneyI
         }}
         onBlur={() => setDraft(null)}
       />
+      {suffix && <span className="money__suffix" aria-hidden="true">{suffix}</span>}
     </div>
+  );
+}
+
+export function AgeInput({ id, value, onChange, label }: { id: string; value: number; onChange: (v: number) => void; label?: string }) {
+  const [draft, setDraft] = useState<string | null>(null);
+  return (
+    <input
+      id={id}
+      className="input input--plain"
+      inputMode="numeric"
+      autoComplete="off"
+      aria-label={label}
+      value={draft ?? String(value)}
+      onChange={(e) => {
+        setDraft(e.target.value);
+        const n = parseInt(e.target.value, 10);
+        if (n >= 18 && n <= 99) onChange(n);
+      }}
+      onBlur={() => setDraft(null)}
+    />
+  );
+}
+
+export function MonthInput({ id, value, placeholder, onChange }: { id: string; value: string; placeholder: string; onChange: (v: string) => void }) {
+  return (
+    <input
+      id={id}
+      type="month"
+      className="input input--plain"
+      value={value || placeholder}
+      onChange={(e) => onChange(e.target.value)}
+    />
   );
 }
 

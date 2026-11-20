@@ -226,7 +226,7 @@ button { cursor: pointer; }
 .list__row { display: flex; justify-content: space-between; gap: 12px; padding: 13px 0; border-bottom: 2px solid var(--bg); }
 .list__row:last-child { border-bottom: 0; }
 .list dt { color: var(--muted); font-weight: 600; font-size: 15px; }
-.list dd { margin: 0; font-weight: 800; }
+.list dd { margin: 0; font-weight: 800; white-space: nowrap; }
 .empty { padding: 20px; text-align: center; }
 .empty .art-sun { width: 150px; margin-top: 0; }
 .empty__title { margin: 8px 0 0; font-size: 20px; font-weight: 800; }
@@ -235,3 +235,71 @@ button { cursor: pointer; }
 .pill--loading { background: #fff; padding-left: 14px; color: var(--muted); }
 .error { margin: 14px 0 0; padding: 12px 14px; border: 2px solid var(--ink); border-radius: 14px; background: var(--peach); font-weight: 700; font-size: 14px; }
 .link { border: 0; background: none; padding: 0; font-weight: 800; text-decoration: underline; min-height: 0; }
+
+/* ---------- Shared additions ---------- */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.input--plain { padding-left: 14px; }
+.money--suffix .input { padding-right: 70px; }
+.money__suffix { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 700; color: var(--muted); pointer-events: none; }
+.question__body .split { margin-top: 4px; }
+.section-title { margin: 26px 0 0; font-size: 18px; font-weight: 800; }
+.alert { margin: 12px 0 0; padding: 12px 14px; border: 2px solid var(--ink); border-radius: 14px; background: var(--peach); font-weight: 700; font-size: 14px; line-height: 1.4; }
+.badge { margin-left: auto; padding: 2px 8px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+
+/* ---------- Road: notes, next up, tappable stops ---------- */
+.notes { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.notes li { padding: 10px 12px; border-radius: 12px; background: #fff; border: 2px solid var(--soft-2); font-size: 13px; line-height: 1.4; color: var(--muted); }
+.next-up { display: grid; gap: 4px; width: 100%; margin-top: 16px; padding: 14px 16px; text-align: left; background: var(--yellow); }
+.next-up--short { background: var(--peach); }
+.next-up__title { font-size: 18px; font-weight: 800; }
+.next-up__line { font-size: 14px; line-height: 1.4; }
+.next-up__cta { margin-top: 4px; font-weight: 800; font-size: 14px; }
+button.stop__card { display: block; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+button.stop__card:active { transform: translateY(-50%) translate(2px, 2px); box-shadow: none; }
+.stop__title, .stop__amount, .stop__from { display: block; }
+.stop--paid .stop__card { background: #F6F3FF; }
+.stop--paid .stop__amount { color: var(--muted); }
+.stop--next .stop__card { outline: 3px solid var(--yellow); outline-offset: 3px; }
+
+/* ---------- Sheets ---------- */
+.sheet__section { margin: 24px 0 0; font-size: 16px; font-weight: 800; }
+.sheet__head .eyebrow { margin-bottom: 2px; }
+.stop-total { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 14px; padding: 14px 16px; border: 3px solid var(--ink); border-radius: 16px; background: var(--yellow); box-shadow: var(--shadow); }
+.stop-total--paid { background: var(--green); }
+.stop-total__label { font-weight: 700; font-size: 14px; }
+.stop-total__amount { font-size: 26px; font-weight: 800; }
+.stop-total__amount small { font-size: 14px; color: var(--muted); }
+.breakdown { margin: 12px 0 0; padding: 0; list-style: none; }
+.breakdown li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 2px solid var(--bg); font-size: 14px; color: var(--muted); }
+.breakdown strong { color: var(--ink); }
+.need-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.need { display: grid; gap: 2px; padding: 12px; border: 2px solid var(--ink); border-radius: 14px; background: var(--bg); }
+.need--short { background: var(--peach); }
+.need__label { font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.need__amount { font-size: 20px; font-weight: 800; }
+.need__have { font-size: 13px; color: var(--muted); }
+.override { margin-top: 12px; }
+.override__actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+.checklist { margin: 8px 0 0; padding: 0; list-style: none; }
+.check { display: flex; gap: 12px; align-items: flex-start; min-height: 44px; padding: 10px 0; border-bottom: 2px solid var(--bg); font-size: 15px; line-height: 1.4; cursor: pointer; }
+.check input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--accent); }
+.check input:checked + span { color: var(--muted); text-decoration: line-through; }
+
+/* ---------- Budget: totals and loan ---------- */
+.list__row--total dt { color: var(--ink); font-weight: 800; }
+.list__row--total { border-top: 2px solid var(--ink); }
+.loan-card { padding: 16px; background: var(--soft); }
+.loan-card__amount { margin: 6px 0 0; font-size: 34px; font-weight: 800; }
+.criteria { margin: 14px 0 0; padding: 4px 16px; list-style: none; }
+.criterion { display: flex; gap: 12px; padding: 12px 0; border-bottom: 2px solid var(--bg); }
+.criterion:last-child { border-bottom: 0; }
+.criterion__icon { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--ink); font-size: 13px; font-weight: 800; background: #fff; }
+.criterion--ok .criterion__icon { background: var(--green); }
+.criterion--warn .criterion__icon { background: var(--yellow); }
+.criterion--fail .criterion__icon { background: var(--peach); }
+.criterion__label { display: block; font-size: 15px; }
+.criterion__detail { display: block; margin-top: 2px; font-size: 13px; line-height: 1.4; color: var(--muted); }
+
+/* Setup screens sit on lilac, so small inputs need their own fill. */
+.screen--onboard .input { background: #fff; border-color: var(--soft-2); }
+.screen--onboard .input:focus { border-color: var(--accent); }

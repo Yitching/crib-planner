@@ -1,6 +1,7 @@
+import type { CSSProperties } from 'react';
 import { EndHouse, StopIcon } from './Art';
-import { money } from '../format';
-import type { Result, Verdict } from '../types';
+import { howFar, money, monthName } from '../format';
+import type { Result, Stop, Verdict } from '../types';
 
 const ROW_H = 160; // keep in sync with --row-h in styles.css
 const W = 390;
@@ -46,15 +47,46 @@ export function VerdictPill({ verdict }: { verdict: Verdict }) {
   );
 }
 
+function stopWhen(s: Stop): string {
+  if (s.status === 'paid') return 'Paid';
+  if (s.monthly) return `From ${monthName(s.month)}`;
+  if (s.monthsAway <= 0) return 'Now';
+  return `${monthName(s.month)} · ${howFar(s.monthsAway).replace('in ', '')}`;
+}
+
+function NextUp({ stop, onOpen }: { stop: Stop; onOpen: () => void }) {
+  if (stop.monthly) {
+    return (
+      <button type="button" className="card next-up" onClick={onOpen}>
+        <span className="eyebrow">Next up</span>
+        <span className="next-up__title">Monthly loan payments</span>
+        <span className="next-up__line">{money(stop.amount)} a month, paid from {stop.paidFrom.toLowerCase()}</span>
+      </button>
+    );
+  }
+  return (
+    <button type="button" className={`card next-up ${stop.shortfall > 0 ? 'next-up--short' : ''}`} onClick={onOpen}>
+      <span className="eyebrow">Next up · {stop.monthsAway > 0 ? monthName(stop.month) : 'now'}</span>
+      <span className="next-up__title">{stop.title}: {money(stop.amount)}</span>
+      <span className="next-up__line">
+        Need {money(stop.cpfPart)} CPF + {money(stop.cashPart)} cash. You'll have {money(stop.cpfAvailable)} CPF and {money(stop.cashAvailable)} cash.
+      </span>
+      <span className="next-up__cta">{stop.shortfall > 0 ? `${money(stop.shortfall)} short · see what to do` : 'See checklist →'}</span>
+    </button>
+  );
+}
+
 interface Props {
   result: Result | null;
   error: string | null;
   onRetry: () => void;
   onEdit: () => void;
+  onOpenStop: (id: Stop['id']) => void;
   hidden: boolean;
 }
 
-export function Road({ result, error, onRetry, onEdit, hidden }: Props) {
+export function Road({ result, error, onRetry, onEdit, onOpenStop, hidden }: Props) {
+  const next = result?.stops.find((s) => s.status === 'next');
   return (
     <main className="screen screen--road" inert={hidden} aria-hidden={hidden || undefined}>
       <header className="header">
@@ -75,30 +107,39 @@ export function Road({ result, error, onRetry, onEdit, hidden }: Props) {
           <p className="summary">
             {result.verdict === 'no'
               ? result.reasons.join(' ')
-              : <><strong>{money(result.cashLeft)}</strong> cash left for your reno at key collection.</>}
+              : <><strong>{money(result.cashLeft)}</strong> cash left for your reno when you get your keys in {monthName(result.keyMonth)}.</>}
           </p>
         )}
+        {result && result.notes.length > 0 && (
+          <ul className="notes">
+            {result.notes.map((n) => <li key={n}>{n}</li>)}
+          </ul>
+        )}
+        {next && <NextUp stop={next} onOpen={() => onOpenStop(next.id)} />}
       </header>
 
       {result && (
         <>
-          <ol className="road" style={{ '--rows': result.stops.length } as React.CSSProperties}>
+          <ol className="road" style={{ '--rows': result.stops.length } as CSSProperties}>
             <RoadSvg n={result.stops.length} />
             {result.stops.map((s, k) => (
-              <li key={s.id} className={`stop stop--${k % 2 === 0 ? 'left' : 'right'}`} style={{ '--row': k } as React.CSSProperties}>
-                <span className={`stop__marker stop__marker--${s.color}`} aria-hidden="true">{k + 1}</span>
-                <article className="card stop__card">
-                  <div className="stop__head">
+              <li key={s.id} className={`stop stop--${k % 2 === 0 ? 'left' : 'right'} stop--${s.status}`} style={{ '--row': k } as CSSProperties}>
+                <span className={`stop__marker stop__marker--${s.color}`} aria-hidden="true">{s.status === 'paid' ? '✓' : k + 1}</span>
+                <button type="button" className="card stop__card" onClick={() => onOpenStop(s.id)} aria-label={`${s.title}, ${money(s.amount)}${s.monthly ? ' a month' : ''}, ${stopWhen(s)}. Open details`}>
+                  <span className="stop__head">
                     <span className={`stop__icon stop__icon--${s.color}`}>{StopIcon[s.id]}</span>
-                    <span className="stop__when">{s.when}</span>
-                  </div>
-                  <h2 className="stop__title">{s.title}</h2>
-                  <p className="stop__amount">
+                    <span className="stop__when">{stopWhen(s)}</span>
+                    {s.status === 'next' && <span className="badge">Next</span>}
+                  </span>
+                  <span className="stop__title">{s.title}</span>
+                  <span className="stop__amount">
                     {money(s.amount)}
                     {s.monthly && <span className="stop__per">/mo</span>}
-                  </p>
-                  <p className="stop__from">Paid from <strong>{s.paidFrom}</strong></p>
-                </article>
+                  </span>
+                  <span className="stop__from">
+                    {s.status === 'paid' ? 'Done ✓' : <>Paid from <strong>{s.paidFrom}</strong></>}
+                  </span>
+                </button>
               </li>
             ))}
           </ol>

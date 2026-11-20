@@ -65,12 +65,17 @@ and negative amounts get a `400` with an `error` message.
 
 ## Screens
 
-- **First-time setup:** six questions, one per screen: flat, combined income, your CPF OA,
-  your partner's CPF OA, cash saved, and HDB or bank loan. Each one gives instant feedback, such as the grant estimate.
-- **Road to your keys:** the verdict ("You can afford it"), cash left for renovation, and four
-  stops: book, sign the lease, get your keys, and the monthly loan.
-- **Edit my numbers:** a sheet that slides up to change any input, then "Show my road".
-- **Budget:** what's left at key collection. **Vendors:** placeholder for now.
+- **First-time setup:** seven questions, one per screen: flat, where you are in the process
+  (with estimated signing and key dates), your ages and whether either of you is a student or in NS,
+  combined income, both CPF OA balances, cash today plus what you each save a month, and loan and downpayment scheme.
+  If you look eligible for Deferred Income Assessment, it is picked for you.
+- **Road to your keys:** the verdict, cash left for renovation at key collection (savings included),
+  a "Next up" card, and the four stops. Paid stops are ticked off.
+- **Appointment details (tap a stop):** what's due and why, how much comes from CPF and cash,
+  what you'll have by then, a checklist you can tick, and "Different amount from HDB?" to replace our estimate.
+- **Edit my numbers:** change any answer.
+- **Budget:** how the renovation budget adds up, and **Getting the biggest loan**: your expected loan,
+  what limits it, and each criterion with whether you meet it. **Vendors:** placeholder for now.
 
 ## How the numbers work
 
@@ -78,17 +83,24 @@ Every assumption is a named constant at the top of [`backend/internal/calc/calc.
 
 | Assumption | Value |
 | --- | --- |
-| Loan-to-value (HDB and bank) | 75% |
-| HDB loan | 2.6%, 25 years |
-| Bank loan | 3.0%, 25 years, 5% of price in cash |
-| Due at signing | 10% of price − booking fee + stamp duty + ~$350 fees |
-| Due at keys | rest of the 25% downpayment + ~$350 fees |
+| Loan limit | 75% of the price (HDB and bank), so the downpayment is 25% |
+| Due at signing | Standard 10%, Staggered 5%, Deferred Income Assessment 2.5% of the price, less the option fee, plus stamp duty and ~$350 fees |
+| Due at keys | the rest of the downpayment, plus ~$350 fees |
+| HDB loan | 2.6%, up to 25 years, must end by 65 (simple average of your ages), payment ≤ 30% of income, income ≤ $14,000 |
+| CPF retention (HDB loan) | keep up to $20,000 in CPF OA; the rest cuts the loan at key collection |
+| Bank loan | 3.0%, 25 years, 5% of the price in cash |
+| DIA eligibility | either of you is a full-time student or in NS (or finished in the last 12 months), and one of you is 30 or under |
+| Default dates | signing in 6 months, keys in 42 months (editable) |
 | CPF OA contributions | 23% of combined income per month |
 | Grant | Enhanced CPF Housing Grant by income band, credited by key collection |
-| Affordability | money never runs out at a stop, and the loan is ≤ 30% of income (MSR) |
+| Already-paid stops | assumed to be reflected in the balances you enter |
 
-CPF is spent first and any gap is topped up from cash. With the design example
-($400,000 4-room, HDB loan, $7,000/month income), the stops are $2,000, $44,950, $60,350
-and $1,361 a month, with $91,000 cash left for renovation.
+CPF is spent first and any gap is topped up from cash. Monthly savings and CPF contributions
+build up until each appointment. With the design example ($400,000 4-room, HDB loan,
+$7,000/month income, no monthly savings), the stops are $2,000, $44,950 and $60,350, with
+$91,000 cash left for renovation. The monthly payment is $1,282 rather than the design's $1,361,
+because $17,320 of CPF above the $20,000 retention goes to cut the loan.
+
+Every stop amount can be replaced with the real figure from HDB in the app.
 
 These are planning estimates, not official figures. Check with HDB and CPF before committing.
