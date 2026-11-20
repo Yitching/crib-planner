@@ -1,0 +1,16 @@
+{
+  "name": "crib-planner",
+  "private": true,
+  "description": "Our Home: a BTO flat payment planner (React + TypeScript frontend, Go backend)",
+  "scripts": {
+    "postinstall": "npm --prefix frontend install",
+    "dev": "concurrently --kill-others --names api,web --prefix-colors magenta,cyan \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "cd backend && go run ./cmd/server",
+    "dev:web": "npm --prefix frontend run dev",
+    "start": "npm --prefix frontend run build && cd backend && go run ./cmd/server -static ../frontend/dist",
+    "test": "cd backend && go vet ./... && go test ./... && cd .. && npm --prefix frontend run typecheck"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.7"
+  }
+}

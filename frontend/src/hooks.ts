@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { calculate } from './api';
+import { ApiError, calculate } from './api';
+
+const RETRIES = 10;
+const RETRY_MS = 1500;
 import type { Inputs, Result } from './types';
 
 interface Calculation {
@@ -18,7 +21,10 @@ export function useCalculation(inputs: Inputs | null, delay = 200): Calculation 
   useEffect(() => {
     if (!key) return;
     const ctrl = new AbortController();
-    const timer = setTimeout(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    let tries = 0;
+
+    const run = () => {
       calculate(JSON.parse(key) as Inputs, ctrl.signal)
         .then((r) => {
           setResult(r);
@@ -26,9 +32,17 @@ export function useCalculation(inputs: Inputs | null, delay = 200): Calculation 
         })
         .catch((e: unknown) => {
           if (ctrl.signal.aborted) return;
-          setError(e instanceof TypeError ? "Couldn't reach the calculator." : String((e as Error).message ?? e));
+          // The server may still be starting: quietly retry for ~15 seconds first.
+          if (e instanceof ApiError && e.retryable && tries < RETRIES) {
+            tries += 1;
+            timer = setTimeout(run, RETRY_MS);
+            return;
+          }
+          setError(e instanceof Error ? e.message : String(e));
         });
-    }, delay);
+    };
+
+    timer = setTimeout(run, delay);
     return () => {
       clearTimeout(timer);
       ctrl.abort();

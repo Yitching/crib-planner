@@ -18,33 +18,28 @@ so there is a single server to deploy. Answers are saved in the browser (`localS
 
 ## Run it
 
-You need Go 1.22+ and Node 20+.
+You need [Go 1.24+](https://go.dev/dl/) and [Node.js 22+](https://nodejs.org/). These commands work in
+PowerShell, Terminal or any shell, from the main `crib-planner` folder.
 
 ```bash
-make install    # install frontend packages
-```
-
-For development, run these in two terminals, then open http://localhost:5173:
-
-```bash
-make dev-backend    # Go API on :8081
+npm install     # once: installs the tools and the frontend packages
 ```
 
 ```bash
-make dev-frontend   # Vite dev server on :5173, forwards /api to :8081
+npm run dev     # starts the Go API (:8081) and the React app (:5173) together
 ```
 
-For production, build the frontend and serve everything from Go on http://localhost:8081:
+Then open http://localhost:5173. Press `Ctrl + C` to stop both.
 
-```bash
-make build && make serve
-```
+Other commands:
 
-Tests (Go unit and API tests, plus a TypeScript type check):
+| Command | What it does |
+| --- | --- |
+| `npm start` | Builds the React app and serves everything from Go on http://localhost:8081, as it would run online |
+| `npm test` | Go tests plus the TypeScript type check |
+| `npm run dev:api` / `npm run dev:web` | Start just one part |
 
-```bash
-make test
-```
+If you have `make`, the Makefile has the same commands (`make dev-backend`, `make dev-frontend`, `make test`).
 
 ## API
 
